@@ -27,7 +27,7 @@ def register(request):
             obj.save()
             messages.success(
                 request, f'Registeration Successfull. You may login now!!')
-            return render(request, 'login/registet.html')
+            return render(request, 'login/register.html')
     return render(request, 'login/register.html')
 
 
