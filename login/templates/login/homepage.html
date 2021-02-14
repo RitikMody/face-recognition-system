@@ -1,1 +1,28 @@
-<h1>This is the homepage. Welcome!!</h1>
+<html>
+
+<head>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <title>Home</title>
+</head>
+
+<body>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-info alert-dismissible">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <p align="center">{{message}}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <h1>This is the homepage. Welcome.</h1>
+    <a href="{% url 'login' %}"><button>Login</button></a><br>
+    <a href="{% url 'register' %}"><button>Register</button></a>
+</body>
+
+</html>

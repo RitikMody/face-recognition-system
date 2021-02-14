@@ -5,6 +5,9 @@
     <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <title>Register</title>
     <style>
         body {
@@ -116,12 +119,22 @@
 </head>
 
 <body>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-info alert-dismissible">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <p align="center">{{message}}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+
     <div class="main">
         <p class="sign" align="center">Register</p>
         <form class="form1" method="POST">
             {% csrf_token %}
-            <input class="un " type="text" align="center" placeholder="Username" name="username" id="username">
-            <input class="pass" type="password" align="center" placeholder="Password" name="password" id="password">
+            <input class="un " type="text" align="center" placeholder="Username" name="username" id="username" required>
+            <input class="pass" type="password" align="center" placeholder="Password" name="password" id="password"
+                required>
             <!-- <a class="submit" align="center" name="register">Register</a> -->
             <button type="submit" name="submit" class="submit" align="center">Register</button>
             <p class="forgot" align="center">Already Have an account? <a href="{% url 'login' %}">Login</p>
@@ -130,5 +143,6 @@
     </div>
 
 </body>
+
 
 </html>
