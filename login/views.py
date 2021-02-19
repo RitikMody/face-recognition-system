@@ -48,11 +48,10 @@ def login(request):
                     messages.error(
                         request, f'This password is incorrect. Please enter the correct passsword.')
                     return render(request, 'login/login.html')
-            else:
-                messages.error(
-                    request, f'Account with this username does not exist!! Please enter a valid username.')
-                return render(request, 'login/login.html')
         except:
+            messages.error(
+                request, f'Account with this username does not exist!! Please enter a valid username.')
+            return render(request, 'login/login.html')
             return render(request, 'login/login.html')
     return render(request, 'login/login.html')
 
