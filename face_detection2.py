@@ -1,5 +1,5 @@
-# from mtcnn.mtcnn import MTCNN
-# import cv2
+from mtcnn import MTCNN
+import cv2
 
 # # Code for Video
 
@@ -22,17 +22,18 @@
 
 
 # # Code for Image
- 
-# # image = cv2.imread('test.jpg')
-# # detector = MTCNN()
-# # try:
-# #     faces = detector.detect_faces(image)
-# #     box=faces[0]['box']
-# #     cv2.rectangle(image, (box[0], box[1]), (box[0]+box[2], box[1]+box[3]), (0,0,255), 1)
-# # except:
-# #     pass
-# # while True:
-# #     cv2.imshow('Image',image)
-# #     if cv2.waitKey(1) and 0xFF == ord('q'):
-# #         break
 
+image = cv2.imread('image.jpg')
+detector = MTCNN()
+try:
+    faces = detector.detect_faces(image)
+    box=faces[0]['box']
+    cv2.rectangle( image, (box[0], box[1]), (box[0]+box[2], box[1]+box[3]), (0,0,255), 1)
+    img = image[box[1]:box[1]+box[3], box[0]:box[0]+box[2]]
+
+except:
+    pass
+while True:
+    cv2.imshow('Image',img)
+    if cv2.waitKey(1) and 0xFF == ord('q'):
+        break
