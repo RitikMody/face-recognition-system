@@ -1,6 +1,6 @@
 import cv2,os
 from django.conf import settings
-from mtcnn import MTCNN
+# from mtcnn import MTCNN
 classifier = cv2.CascadeClassifier(os.path.join(settings.BASE_DIR,'haarcascade_frontalface_default.xml'))
 
 

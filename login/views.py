@@ -35,6 +35,7 @@ def register(request):
 
 
 def login(request):
+    print('facelogin' in request.POST)
     if 'submit' in request.POST:
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -55,6 +56,8 @@ def login(request):
             messages.error(
                 request, f'Account with this username does not exist!! Please enter a valid username.')
             return render(request, 'login/login.html')
+    if 'facelogin' in request.POST:
+        return render(request, 'login/homepage.html')
     return render(request, 'login/login.html')
 
 
@@ -62,11 +65,13 @@ def home(request):
     return render(request, 'login/homepage.html')
 
 def gen(camera):
-	while True:
-		frame = camera.get_frame()
-		yield (b'--frame\r\n'
-				b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-
+    try:
+        while True:
+            frame = camera.get_frame()
+            yield (b'--frame\r\n'
+                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+    except:
+        pass   
 
 def video_feed(request):
 	return StreamingHttpResponse(gen(VideoCamera()),

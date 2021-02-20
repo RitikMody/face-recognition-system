@@ -12,9 +12,13 @@
   flex: 50%;
 }  
 
-
 .flex-child-two {
   flex:50%;
+  padding: 0 2%;
+} 
+
+.flex-child-three {
+  padding: 0 5%;
 } 
 .main {
   position: relative;
