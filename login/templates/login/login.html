@@ -44,10 +44,10 @@
         <div class="flex-child-two">
             <div id="input">
                 <div id="camera_input">
-                    <img src="{% url 'video_feed' %}">
+                    <img src="{% url 'video_feed' %}" id="video_feed">
                     <form class="form1" method="POST">
                         {% csrf_token %}
-                        <button type="submit"  id="button" class="button2 facelogin" name="facelogin">
+                        <button type="submit" id="button" class="button2" name="facelogin">
                             Face Login
                         </button>
                     </form>
@@ -56,4 +56,5 @@
         </div>
     </div>
 </body>
+
 </html>
