@@ -1,0 +1,160 @@
+*,
+*:before,
+*:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    color: white;
+    background-color: teal;
+    margin: 0;
+}
+
+h1 {
+    font-size: 60px;
+    margin: 0px;
+    padding: 0px;
+}
+
+h2 {
+    margin: 0px;
+    padding: 0px;
+    color: #FFF;
+}
+
+div.wrap {
+    width: 500px;
+    position: absolute;
+    top: 55%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+    vertical-align: middle;
+}
+
+div.wrap div {
+    position: relative;
+    margin: 50px 0;
+}
+
+label {
+    position: absolute;
+    top: 0;
+    font-size: 30px;
+    margin: 10px;
+    padding: 0 10px;
+    background-color: teal;
+    -webkit-transition: top .2s ease-in-out,
+        font-size .2s ease-in-out;
+    transition: top .2s ease-in-out,
+        font-size .2s ease-in-out;
+}
+
+.active {
+    top: -25px;
+    font-size: 20px;
+}
+
+input[type=text] {
+    width: 100%;
+    padding: 18px;
+    border: 1px solid white;
+    font-size: 20px;
+    background-color: teal;
+    color: white;
+}
+
+input[type=text]:focus {
+    outline: none;
+}
+
+div.table {
+    max-width: 1200px;
+    margin: 10px auto;
+    align-self: auto;
+    position: absolute;
+    top: 50%;
+    left: 75%;
+    transform: translate(-50%, -50%);
+    vertical-align: middle;
+
+}
+
+caption {
+    font-size: 2em;
+    font-weight: 400;
+    padding: 10px 0;
+}
+
+thead th {
+    font-weight: 400;
+    background: #8a97a0;
+    color: #000;
+}
+
+tr {
+    background: rgb(156, 145, 145);
+    border-bottom: 1px solid #000;
+    margin-bottom: 5px;
+    color: #000;
+}
+
+tr:nth-child(even) {
+    background: rgb(186, 181, 181);
+}
+
+th,
+td {
+    text-align: left;
+    padding: 20px;
+    font-weight: 300;
+}
+
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+
+li {
+    float: left;
+    border-right: 1px solid #bbb;
+}
+
+li:last-child {
+    border-right: none;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+::placeholder {
+    color: white;
+    opacity: 1;
+}
+
+.button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 30px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+}

@@ -1,28 +1,72 @@
+{% load static %}
 <html>
 
 <head>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'login/css/home.css' %}" />
+    <link href='https://fonts.googleapis.com/css?family=Nunito:400,300' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-info alert-dismissible">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <p align="center">{{message}}</p>
+    <ul>
+        <li><a href="{% url 'home' %}">Password Manger</a></li>
+        <li style="float:right"><a href="{% url 'login' %}">LOGOUT</a></li>
+        <li style="float:right"><a href="{% url 'login' %}">LOGIN</a></li>
+        <li style="float:right"><a href="{% url 'register' %}">REGISTER</a></li>
+    </ul>
+    <div class="wrap">
+        <h1>TRUST US</h1>
+        <h2>Store all your passwords at one place.</h2>
+        <div>
+            <input id="email" type="text" class="cool" placeholder="Enter Application/Website name">
+        </div>
+        <div>
+            <input id="fname" type="text" class="cool" placeholder="Enter Username/Email" />
+        </div>
+
+        <div>
+            <input id="lname" type="text" class="cool" placeholder="Enter Password">
+        </div>
+        <button class="button">ADD</button>
+
     </div>
-    {% endfor %}
-    {% endif %}
-    <h1>This is the homepage. Welcome.</h1>
-    <a href="{% url 'login' %}"><button>Login</button></a><br>
-    <a href="{% url 'register' %}"><button>Register</button></a>
+    <div class="table">
+        <table>
+            <caption>Your Passwords</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Application</th>
+                    <th scope="col">E-mail</th>
+                    <th scope="col">Password</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Facebook</th>
+                    <td>nick@example.com</td>
+                    <td>123456nick</td>
+                </tr>
+                <tr>
+                    <th scope="row">Instagram</th>
+                    <td>andrew@example.com</td>
+                    <td>andrew123</td>
+                </tr>
+                <tr>
+                    <th scope="row">Twitter</th>
+                    <td>dave@example.com</td>
+                    <td>dave@6283</td>
+                </tr>
+                <tr>
+                    <th scope="row">Snapchat</th>
+                    <td>peter2000</td>
+                    <td>peter9999</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </body>
 
 </html>
