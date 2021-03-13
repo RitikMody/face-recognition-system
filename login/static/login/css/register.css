@@ -5,9 +5,9 @@
 
 .main {
     background-color: #FFFFFF;
-    width: 400px;
-    height: 400px;
-    margin: 7em auto;
+    width: 450px;
+    height: 660px;
+    margin: 1em auto;
     border-radius: 1.5em;
     box-shadow: 0px 11px 35px 2px rgba(0, 0, 0, 0.14);
 }
@@ -70,12 +70,9 @@ form.form1 {
     border: 2px solid rgba(0, 0, 0, 0.18) !important;
 
 }
-
 .submit {
     cursor: pointer;
     border-radius: 5em;
-    color: #fff;
-    background: linear-gradient(to right, #9C27B0, #E040FB);
     border: 0;
     padding-left: 40px;
     padding-right: 40px;
@@ -85,7 +82,18 @@ form.form1 {
     margin-left: 35%;
     font-size: 13px;
     box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.04);
-}
+    background-color: #8261ee;
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: 0.25px;
+    -webkit-transition: all 0.3s ease 0s;
+    -moz-transition: all 0.3s ease 0s;
+    -o-transition: all 0.3s ease 0s;
+    transition: all 0.3s ease 0s;
+  }
+.submit:hover{
+    background-color: #ff589e;
+  }
 
 .forgot {
     text-shadow: 0px 0px 3px rgba(117, 117, 117, 0.12);
@@ -103,3 +111,4 @@ form.form1 {
     .main {
         border-radius: 0px;
     }
+}
