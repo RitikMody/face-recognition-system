@@ -24,17 +24,59 @@
 
     <div class="main">
         <p class="sign" align="center">Register</p>
-        <form class="form1" method="POST">
+        <form class="form1" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <input class="un " type="text" align="center" placeholder="First Name" name="fname" id="fname" required>
+            <!-- <input class="un " type="text" align="center" placeholder="First Name" name="fname" id="fname" required>
             <input class="un " type="text" align="center" placeholder="Last Name" name="lname" id="lname" required>
             <input class="un " type="text" align="center" placeholder="Username" name="username" id="username" required>
             <input class="un " type="text" align="center" placeholder="Email" name="email" id="email" required>
             <input class="pass" type="password" align="center" placeholder="Password" name="password" id="password"
                 required>
                 <p align="center">Upload Your Image</p>
-            <input class="un " type="file" align="center"  name="img">
+            <input class="un " type="file" align="center"  name="img"> -->
             <!-- <a class="submit" align="center" name="register">Register</a> -->
+            <div class="form-group">
+                <div class="un ">
+                    <div class="input-group">
+                        <label>First Name</label>
+                        {{form.fname}}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="un ">
+                    <div class="input-group">
+                        <label>Last Name</label>
+                        {{form.lname}}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="un ">
+                    <div class="input-group">
+                        <label>Email</label>
+                        {{form.email}}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="un ">
+                    <div class="input-group">
+                        <label>Password</label>
+                        {{form.passwrd}}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="un ">
+                    <div class="input-group">
+                        <label>Upload your image</label>
+                        {{form.img}}
+                    </div>
+                </div>
+            </div>
+
+        
             <button type="submit" name="submit" class="submit" align="center">Register</button>
             <p class="forgot" align="center">Already Have an account? <a href="{% url 'login' %}" id="link">Login</p>
  

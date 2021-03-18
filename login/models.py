@@ -4,13 +4,12 @@ from django.db import models
 
 
 class Staff(models.Model):
-    username = models.CharField(max_length=50)
-    email = models.CharField(max_length=100, blank=True)
-    fname = models.CharField(max_length=100,  blank=True)
-    lname = models.CharField(max_length=100,  blank=True)
+    email = models.CharField(max_length=100)
+    fname = models.CharField(max_length=100)
+    lname = models.CharField(max_length=100)
     passwrd = models.CharField(max_length=100)
-    img = models.ImageField(upload_to='media/',  blank=True)
-    is_email_active = models.BooleanField(default=True)
+    img = models.ImageField(upload_to='images/')
+    is_email_active = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.email}'

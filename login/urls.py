@@ -10,4 +10,7 @@ urlpatterns = [
     path('video_feed', views.video_feed, name='video_feed'),
     path('activate/<slug:uidb64>/<slug:token>/',
          views.activate, name='activate')
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

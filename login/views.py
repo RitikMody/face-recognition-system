@@ -12,52 +12,44 @@ from django.core.mail import EmailMessage
 from django.utils.encoding import force_bytes, force_text
 from .tokens import account_activation_token
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.decorators import login_required
+from .forms import RegisterForm
 # Create your views here.
 
 
 def register(request):
-    if 'submit' in request.POST:
-        fname = request.POST.get('fname')
-        lname = request.POST.get('lname')
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        img = request.POST.get('img')
-        try:
-            obj = Staff.objects.get(username=username)
-            obj = Staff.objects.get(email=email)
-            print(obj)
-            if obj:
-                # e = 'This username is taken. Please try again with different username.'
-                # return render(request, 'login/register.html', {'e': e})
-                messages.error(
-                    request, f'This username is taken. Please try again with different username.')
-        except:
-            obj = Staff()
-            obj.fname = fname
-            obj.lname = lname
-            obj.email = email
-            obj.username = username
-            obj.passwrd = password
-            obj.img = img
-            obj.save()
-            mail_subject = 'Verify your email account.'
-            current_site = get_current_site(request)
-            message = render_to_string('login/activate.html', {
-                'user': obj,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(obj.pk)),
-                'token': account_activation_token.make_token(obj),
-            })
-            to_email = obj.email
-            email = EmailMessage(
-                mail_subject, message, to=[to_email]
-            )
-            email.send()
-            messages.success(
-                request, f'Registeration Successfull. Please verify your account!!')
-            return render(request, 'login/register.html')
-    return render(request, 'login/register.html')
+    if request.method == 'POST':
+        form = RegisterForm(request.POST, request.FILES)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            try:
+                staff_obj = Staff.objects.get(email=email)
+                if(staff_obj):
+                    messages.error(
+                        request, f'This email is already registered.')
+            except:
+                obj = form.save()
+                mail_subject = 'Verify your email account.'
+                current_site = get_current_site(request)
+                message = render_to_string('login/activate.html', {
+                    'user': obj,
+                    'domain': current_site.domain,
+                    'uid': urlsafe_base64_encode(force_bytes(obj.pk)),
+                    'token': account_activation_token.make_token(obj),
+                })
+                to_email = obj.email
+                email = EmailMessage(
+                    mail_subject, message, to=[to_email]
+                )
+                email.send()
+                messages.success(
+                    request, f'Registeration Successfull. Please verify your account!!')
+
+                return redirect('login')
+    else:
+        form = RegisterForm()
+    return render(request, 'login/register.html', {'form': form})
 
 
 def activate(request, uidb64, token):
@@ -82,37 +74,41 @@ def login(request):
     print('facelogin' in request.POST)
     if 'submit' in request.POST:
         email = request.POST.get('email')
-        print(email)
         password = request.POST.get('password')
         try:
             obj = Staff.objects.get(email=email)
             print(obj)
             if obj:
-                if obj.passwrd == password:
-                    request.session['email'] = email
-                    print(request.session['email'])
-                    return redirect('home')
+                if obj.is_email_active:
+                    if obj.passwrd == password:
+                        print("matched")
+                        request.session['email'] = email
+                        print(request.session['email'])
+                        return redirect('home')
+                    else:
+                        messages.error(
+                            request, f'This password is incorrect. Please enter the correct passsword.')
+                        return render(request, 'login/login.html')
                 else:
                     messages.error(
-                        request, f'This password is incorrect. Please enter the correct passsword.')
-                    return render(request, 'login/login.html')
+                        request, f'Please verify your email account first.')
 
         except:
             messages.error(
                 request, f'Account with this username does not exist!! Please enter a valid username.')
             return render(request, 'login/login.html')
-    if 'facelogin' in request.POST:
-        return render(request, 'login/homepage.html')
+    # if 'facelogin' in request.POST:
+    #     return render(request, 'login/homepage.html')
     return render(request, 'login/login.html')
 
 
 def home(request):
     try:
+        print(request.session['email'])
         email = request.session['email']
         staff_obj = Staff.objects.get(email=email)
         pass_obj = Password.objects.all()
         pass_obj = pass_obj.filter(user=staff_obj)
-        print(pass_obj)
         if 'form_submit' in request.POST:
             email = request.session['email']
             staff_obj = Staff.objects.get(email=email)
@@ -129,38 +125,72 @@ def home(request):
             obj.app_name = app_name
             obj.app_password = password
             obj.save()
-            return render(request, 'login/homepage.html', {'obj': pass_obj})
+            return render(request, 'login/homepage.html', {'obj': pass_obj, 'tab': 1})
 
         if 'update' in request.POST:
             userid = request.POST.get('userid')
+            print(userid)
             app_name = request.POST.get('appname_update')
             app_email = request.POST.get('email_update')
             app_pass = request.POST.get('password')
-            print(userid)
-            print(app_name)
             try:
-                obj = pass_obj.objects.get(app_name=app_name)
+                obj = pass_obj.get(id=userid)
+                print(obj)
                 if obj:
+                    obj.app_name = app_name
                     obj.app_email = app_email
                     obj.app_password = app_pass
                     obj.save()
+                    return render(request, 'login/homepage.html',  {'obj': pass_obj, 'tab': 1})
 
             except:
                 pass
 
         if 'delete' in request.POST:
             userid = request.POST.get('user_d')
-            app_name = request.POST.get('appname_d')
-            print(app_name)
+            print(userid)
             try:
-                obj = pass_obj.objects.get(app_name=app_name)
-                print(obj)
+                obj = pass_obj.get(id=userid)
                 if obj:
                     obj.delete()
+                    return render(request, 'login/homepage.html',  {'obj': pass_obj, 'tab': 1})
             except:
                 pass
 
+        if 'view' in request.POST:
+            userid = request.POST.get('user_id_view')
+            print(userid)
+            try:
+                obj = pass_obj.get(id=userid)
+                if obj:
+                    print(obj.app_password)
+                    email = request.session['email']
+                    mail_subject = 'Your account password.'
+                    current_site = get_current_site(request)
+                    message = "Your password for " + obj.app_name + " with username/email: " + \
+                        obj.app_email + " is " + obj.app_password + "!!"
+                    print(messages)
+                    to_email = email
+                    print(to_email)
+                    email = EmailMessage(
+                        mail_subject, message, to=[to_email]
+                    )
+                    email.send()
+                    return render(request, 'login/homepage.html',  {'obj': pass_obj, 'tab': 1})
+            except:
+                pass
+
+        if 'signout' in request.POST:
+            email = request.POST.get('user_session')
+            print(email)
+            if request.session['email'] == email:
+                try:
+                    del request.session['email']
+                    return redirect('login')
+                except:
+                    return HttpResponse("logout failed")
         return render(request, 'login/homepage.html',  {'obj': pass_obj})
+
     except:
         return redirect('login')
 

@@ -22,17 +22,25 @@
     <script>
     
     function update(id,app_name,email){
-            console.log(email);
-            console.log(name);
           document.getElementById("userid").value = id;
           document.getElementById("appname_update").value = app_name;
           document.getElementById("email_update").value = email;
         }
         function delete_record(id,app_name, email){
-          document.getElementById("user_d").innerHTML = id;
+          document.getElementById("user_d").value= id;
           document.getElementById("appname_d").innerHTML = app_name;
           document.getElementById("email_d").innerHTML = email;
-      </script>
+        }
+        function logout(email){
+            console.log(email);
+            document.getElementById("user_session").value=email;
+            console.log(document.getElementById("user_session"));
+        }
+        function view(id){
+            console.log(id);
+            document.getElementById("user_id_view").value = id;
+        }
+    </script>
 </head>
 
 
@@ -48,6 +56,18 @@
     </div>
     <!-- ***** Preloader End ***** -->
 
+    {% if tab == 1 %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function () {
+        // Handler for .ready() called.
+        $('html, body').animate({
+            scrollTop: $('#view').offset().top
+        }, 'slow');
+    });
+    </script>
+    {% endif %}
+    
 
     <!-- ***** Header Area Start ***** -->
     <header class="header-area header-sticky">
@@ -65,10 +85,11 @@
                         <!-- ***** Logo End ***** -->
                         <!-- ***** Menu Start ***** -->
                         <ul class="nav">
+                            <!-- hi {{ request.session.email }} -->
                             <li><a href="#welcome" >Home</a></li>
-                            <li><a href="#features">Add</a></li>
-                            <li><a href="#pricing-plans">View Passwords</a></li>
-                            <li><a href="{% url 'login' %}">Logout</a></li>
+                            <li><a href="#add">Add</a></li>
+                            <li><a href="#view">View Passwords</a></li>
+                            <li><a role="button" onclick="return logout('{{ request.session.email }}')" data-toggle="modal" data-target="#Modal2" style="text-decoration:none;" >Logout</a></li>
                         </ul>
                         <a class='menu-trigger'>
                             <span>Menu</span>
@@ -100,8 +121,8 @@
     <!-- ***** Welcome Area End ***** -->
 
 
-    <!-- ***** Features Big Item Start ***** -->
-    <section class="section padding-top-70 padding-bottom-0" id="features">
+    <!-- ***** Add Item Start ***** -->
+    <section class="section padding-top-70 padding-bottom-0" id="add">
         <div class="container">
             <!-- ***** Section Title Start ***** -->
             <div class="row">
@@ -165,18 +186,10 @@
             </div>
         </div>
     </section>
-    <!-- ***** Features Big Item End ***** -->
+    <!-- ***** add Item End ***** -->
 
-    
-
-    
-
-   
-
-               
-
-    <!-- ***** Pricing Plans Start ***** -->
-    <section class="section colored" id="pricing-plans">
+    <!-- ***** view password Start ***** -->
+    <section class="section colored" id="view">
         <div class="container">
             <!-- ***** Section Title Start ***** -->
             <div class="row">
@@ -209,8 +222,8 @@
                         </div>
                         <div class="pricing-footer">
                             <a role="button" onclick="return update('{{obj.id}}','{{obj.app_name}}','{{obj.app_email}}')" data-toggle="modal" data-target="#Modal3" class="main-button">Update</a>
-                            <a  class="main-button">View</a>
-                            <a role="button" onclick="return delete_record('{{obj.id}}','{{obj.app_name}}','{{obj.app_email}}')" data-toggle="modal" data-target="#Modal4" style="text-decoration:none;" class="main-button">Delete</a>
+                            <a role="button" onclick="return view('{{obj.id}}')" data-toggle="modal" data-target="#Modal1" class="main-button">View</a>
+                            <a role="button" onclick="return delete_record('{{obj.id}}','{{obj.app_name}}','{{obj.app_email}}')" data-toggle="modal" data-target="#Modal4" class="main-button">Delete</a>
                         </div>
                     </div>
                 </div>
@@ -220,12 +233,8 @@
             </div>
         </div>
     </section>
-    <!-- ***** Pricing Plans End ***** -->
+    <!-- ***** view passwords End ***** -->
 
-   
-
-   
-    
 
     <!-- ***** Footer Start ***** -->
     <footer>
@@ -243,7 +252,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel" style="margin-left: 36%;">Update Account Details</h5>
+                <h5 class="modal-title" id="exampleModalLabel" style="margin-left: 28%;">Update Account Details</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left: 0;">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -261,15 +270,15 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="email" class="col-sm-3 col-3 text-right control-label col-form-label">Email/Username<span style="color: red;">*</span></label>
+                        <label for="email" class="col-sm-3 col-3 text-right control-label col-form-label">Username/<br>Email<span style="color: red;">*</span></label>
                         <div class="col-sm-9 col-9">
                             <input type="email" class="form-control" id="email_update" placeholder="Enter the Email ID here" name="email_update" required="True">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="email" class="col-sm-3 col-3 text-right control-label col-form-label">Password<span style="color: red;">*</span></label>
+                        <label for="email" class="col-sm-3 col-3 text-right control-label col-form-label">Password</label>
                         <div class="col-sm-9 col-9">
-                            <input type="password" class="form-control" id="password_update" placeholder="Enter the new password" name="password" required="True">
+                            <input type="password" class="form-control" id="password_update" placeholder="Enter new password if updated" name="password" >
                         </div>
                     </div>                    
 
@@ -305,11 +314,11 @@
             <div class="modal-body">
                 <form class="form-horizontal" method="POST" name="myform">
                     {% csrf_token %}
-                    <input type="number" value="0" id="user_d" name="user_d" style="visibility: hidden;">
+                    <input type="number"  id="user_d" name="user_d" style="visibility: hidden;">
                     
                    
                     <div class="content" style="text-align: center;">
-                        <b>Application Name: </b><span id="appname_d"></span> 
+                        <b>Application Name: </b><span id="appname_d"></span> <br>
                         <b>Email ID: </b><span id="email_d"></span><br>
                       </div>
 
@@ -325,7 +334,69 @@
         </div>
     </div>
 </div>
+ <!-- Modal for View -->
 
+ <div class="modal fade" id="Modal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel" style="margin-left: 35%;">View Password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left: 0;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <p style="text-align: center;">Do you want the password to be sent to the registered email?</p>
+            <div class="modal-body">
+                <form class="form-horizontal" method="POST" name="myform">
+                    {% csrf_token %}
+                    <input type="text"  id="user_id_view" name="user_id_view" style="visibility: hidden;">
+                    
+
+            <div class="row pt-3" style="text-align: center;">
+                <div class="col-md-2 offset-md-4 col-3 offset-2" style="margin-right: 25px;">
+              <button type="submit" class="btn btn-danger" name="view" style="margin-right: 10px !important;">Yes</button></div>
+              <div class="col-md-2 col-3">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+          </div>
+          </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Logout -->
+
+<div class="modal fade" id="Modal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel" style="margin-left: 43%;">Logout</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left: 0;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <p style="text-align: center;">Are you sure you want to logout?</p>
+            <div class="modal-body">
+                <form class="form-horizontal" method="POST" name="myform">
+                    {% csrf_token %}
+                    <input type="text"  id="user_session" name="user_session" style="visibility: hidden;">
+                    
+
+            <div class="row pt-3" style="text-align: center;">
+                <div class="col-md-2 offset-md-4 col-3 offset-2" style="margin-right: 25px;">
+              <button type="submit" class="btn btn-danger" name="signout" style="margin-right: 10px !important;">Yes</button></div>
+              <div class="col-md-2 col-3">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+          </div>
+          </form>
+            </div>
+        </div>
+    </div>
+</div>
     <!-- jQuery -->
     <script src="{%static 'login/assets/js/jquery-2.1.0.min.js' %}"></script>
 
