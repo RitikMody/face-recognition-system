@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
     <!-- <script src="{% static 'login/js/login.js' %}"></script> -->
     <title>Login</title>
 
@@ -44,7 +45,10 @@
         <div class="flex-child-two">
             <div id="input">
                 <div id="camera_input">
+                    {% if set_value != 1 %}
                     <img src="{% url 'video_feed' %}" id="video_feed">
+                    {% endif %}
+                    <!-- <img src="../../../captured_images/img2.jpg"  alt="not found" > -->
                     <form class="form1" method="POST">
                         {% csrf_token %}
                         <button type="submit" id="button" class="button2" name="facelogin">
@@ -56,5 +60,4 @@
         </div>
     </div>
 </body>
-
 </html>

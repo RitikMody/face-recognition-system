@@ -97,8 +97,8 @@ def login(request):
             messages.error(
                 request, f'Account with this username does not exist!! Please enter a valid username.')
             return render(request, 'login/login.html')
-    # if 'facelogin' in request.POST:
-    #     return render(request, 'login/homepage.html')
+    if 'facelogin' in request.POST:
+        return render(request, 'login/login.html', {'set_value': 1})
     return render(request, 'login/login.html')
 
 
