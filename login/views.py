@@ -20,12 +20,13 @@ from .forms import RegisterForm
 from PIL import Image
 import numpy as np
 from keras.models import load_model
+import tensorflow as tf
 from deepface import DeepFace
-net = DeepFace.OpenFace.loadModel()
+# net = DeepFace.OpenFace.loadModel()
 import os
 
 # Create your views here.
-#model = load_model("face_ver2.h5")
+model = load_model("face_ver2.h5")
 
 def pre_process(path):
   im = Image.open(path)
