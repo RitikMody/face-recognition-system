@@ -44,7 +44,7 @@ class VideoCamera(object):
                 crop_img = frame[y:y2, x:x2]
                 FaceFileName = ".\captured_images\img2.jpg"
                 status = cv2.imwrite(FaceFileName, crop_img)
-                # print(status)
+                print(status)
             frame_flip = cv2.flip(frame, 1)
             ret, jpeg = cv2.imencode('.jpg', frame_flip)
             return jpeg.tobytes()

@@ -51,7 +51,7 @@
                     <!-- <img src="../../../captured_images/img2.jpg"  alt="not found" > -->
                     <form class="form1" method="POST">
                         {% csrf_token %}
-                        <button type="submit" id="button" class="button2" name="facelogin">
+                        <button type="submit" id="button" class="button2" name="facelogin" onclick="document.getElementById('video_feed').setAttribute('display', null)">
                             Face Login
                         </button>
                     </form>

@@ -12,7 +12,7 @@ class Staff(models.Model):
     is_email_active = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.email}'
+        return f'{self.email},{self.img}'
 
 
 class Password(models.Model):

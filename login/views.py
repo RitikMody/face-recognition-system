@@ -1,3 +1,5 @@
+############# uncomment line 28 and line 123 ######################
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Staff, Password
@@ -15,7 +17,21 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm
+from PIL import Image
+import numpy as np
+from keras.models import load_model
+from deepface import DeepFace
+net = DeepFace.OpenFace.loadModel()
+import os
+
 # Create your views here.
+#model = load_model("face_ver2.h5")
+
+def pre_process(path):
+  im = Image.open(path)
+  out = im.resize((96,96))
+  out = np.expand_dims(out, axis=0)
+  return np.array(out)
 
 
 def register(request):
@@ -98,9 +114,22 @@ def login(request):
                 request, f'Account with this username does not exist!! Please enter a valid username.')
             return render(request, 'login/login.html')
     if 'facelogin' in request.POST:
+        x = pre_process('captured_images/img2.jpg')
+        y = 'media/images'
+        scores = {}
+        for image in os.listdir(y):
+            obj = Staff.objects.get(img=('images/' + image))
+            score = 0
+            #score = model.predict([x,pre_process(y + '/' + image)])
+            if score > 0.5:
+                scores[obj.email] = score
+        if len(scores) > 0:
+            email = max(scores, key=scores.get)
+            request.session['email'] = email
+            return redirect('home')
         return render(request, 'login/login.html', {'set_value': 1})
+        
     return render(request, 'login/login.html')
-
 
 def home(request):
     try:
