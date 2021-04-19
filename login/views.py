@@ -24,6 +24,10 @@ import tensorflow as tf
 from deepface import DeepFace
 # net = DeepFace.OpenFace.loadModel()
 import os
+import cv2
+from django.conf import settings
+classifier = cv2.CascadeClassifier(os.path.join(
+    settings.BASE_DIR, 'haarcascade_frontalface_default.xml'))
 
 # Create your views here.
 model = load_model("face_ver2.h5")
@@ -47,6 +51,29 @@ def register(request):
                         request, f'This email is already registered.')
             except:
                 obj = form.save()
+                print(obj.img)
+                frame = cv2.imread("media/"+str(obj.img))
+                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                bboxes = classifier.detectMultiScale(gray)
+                if(len(bboxes)==1):
+                    for box in bboxes:
+                        x, y, width, height = box
+                        x2, y2 = x + width, y + height
+                        cv2.rectangle(frame, (x, y), (x2, y2), (0, 0, 255), 1)
+                        # FaceFileName = ".\captured_images\img.jpg"
+                        # status = cv2.imwrite(FaceFileName, frame)
+                        crop_img = frame[y:y2, x:x2]
+                        FaceFileName = "media/"+str(obj.img)
+                        os.remove(FaceFileName)
+                        status = cv2.imwrite(FaceFileName, crop_img)
+                    
+                else:
+                    messages.error(
+                        request, f'Unable to detect a unique face. Please upload one with just your face.')
+                    obj.delete()
+                    return redirect('register')
+
+
                 mail_subject = 'Verify your email account.'
                 current_site = get_current_site(request)
                 message = render_to_string('login/activate.html', {
@@ -119,15 +146,20 @@ def login(request):
         y = 'media/images'
         scores = {}
         for image in os.listdir(y):
-            obj = Staff.objects.get(img=('images/' + image))
+            obj = Staff.objects.get(img='images/' + image)
             score = 0
-            #score = model.predict([x,pre_process(y + '/' + image)])
+            score = model.predict([x,pre_process(y + '/' + image)])
+            print(score)
             if score > 0.5:
                 scores[obj.email] = score
         if len(scores) > 0:
             email = max(scores, key=scores.get)
             request.session['email'] = email
             return redirect('home')
+        else:
+            messages.error(
+                        request, f'Unable to recognise the face.')
+        
         return render(request, 'login/login.html', {'set_value': 1})
         
     return render(request, 'login/login.html')
