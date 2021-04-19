@@ -149,7 +149,7 @@ def login(request):
             obj = Staff.objects.get(img='images/' + image)
             score = 0
             score = model.predict([x,pre_process(y + '/' + image)])
-            print(score)
+            # print(obj.email+"="+score)
             if score > 0.5:
                 scores[obj.email] = score
         if len(scores) > 0:
