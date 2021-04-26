@@ -32,17 +32,19 @@ classifier = cv2.CascadeClassifier(os.path.join(
 # Create your views here.
 model = load_model("face_ver2.h5")
 
+
 def pre_process(path):
-  im = Image.open(path)
-  out = im.resize((96,96))
-  out = np.expand_dims(out, axis=0)
-  return np.array(out)
+    im = Image.open(path)
+    out = im.resize((96, 96))
+    out = np.expand_dims(out, axis=0)
+    return np.array(out)
 
 
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST, request.FILES)
         if form.is_valid():
+            del form.fields['password2']
             email = form.cleaned_data['email']
             try:
                 staff_obj = Staff.objects.get(email=email)
@@ -55,7 +57,7 @@ def register(request):
                 frame = cv2.imread("media/"+str(obj.img))
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 bboxes = classifier.detectMultiScale(gray)
-                if(len(bboxes)==1):
+                if(len(bboxes) == 1):
                     for box in bboxes:
                         x, y, width, height = box
                         x2, y2 = x + width, y + height
@@ -66,13 +68,12 @@ def register(request):
                         FaceFileName = "media/"+str(obj.img)
                         os.remove(FaceFileName)
                         status = cv2.imwrite(FaceFileName, crop_img)
-                    
+
                 else:
                     messages.error(
                         request, f'Unable to detect a unique face. Please upload one with just your face.')
                     obj.delete()
                     return redirect('register')
-
 
                 mail_subject = 'Verify your email account.'
                 current_site = get_current_site(request)
@@ -130,7 +131,7 @@ def login(request):
                         print(request.session['email'])
                         return redirect('home')
                     else:
-                        messages.error(
+                        messages.warning(
                             request, f'This password is incorrect. Please enter the correct passsword.')
                         return render(request, 'login/login.html')
                 else:
@@ -148,21 +149,36 @@ def login(request):
         for image in os.listdir(y):
             obj = Staff.objects.get(img='images/' + image)
             score = 0
-            score = model.predict([x,pre_process(y + '/' + image)])
+            score = model.predict([x, pre_process(y + '/' + image)])
             # print(obj.email+"="+score)
             if score > 0.5:
                 scores[obj.email] = score
         if len(scores) > 0:
+            print(len(scores))
             email = max(scores, key=scores.get)
-            request.session['email'] = email
-            return redirect('home')
+            try:
+                obj = Staff.objects.get(email=email)
+                print(obj)
+                if obj:
+                    if obj.is_email_active:
+                        request.session['email'] = email
+                        return redirect('home')
+                    else:
+                        messages.error(
+                            request, f'Please verify your email account first.')
+                        return redirect('login')
+            except:
+                pass
         else:
             messages.error(
-                        request, f'Unable to recognise the face.')
-        
+                request, 'Unable to recognise the face.')
+            return redirect('login')
+            # return render(request, 'login/login.html', {'set_value': 0})
+
         return render(request, 'login/login.html', {'set_value': 1})
-        
+
     return render(request, 'login/login.html')
+
 
 def home(request):
     try:

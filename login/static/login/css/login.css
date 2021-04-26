@@ -183,7 +183,7 @@ form.form1 {
 
 #video_feed {
   width: 200%;
-  height: 150%;
+  height: 145%;
   border: 2px solid black;
   padding: 2%;
 }
@@ -199,6 +199,7 @@ transform: scale(-1, 1);
 #or{
   font-size: 300%;
   margin-top: 150%;
+  color: #fff;
 }
 
 @media (max-width: 600px) {

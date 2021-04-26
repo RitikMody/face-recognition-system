@@ -5,6 +5,8 @@ from django.contrib.auth.forms import *
 
 
 class RegisterForm(forms.ModelForm):
+    password2 = forms.CharField(
+        min_length=6, max_length=14, label='Confirm Password', widget=forms.PasswordInput(attrs={'class': 'form-control', 'id': 'password2', 'onkeyup': 'check()', 'placeholder': 'Confirm Password'}))
 
     class Meta:
         model = Staff
@@ -20,4 +22,4 @@ class RegisterForm(forms.ModelForm):
         self.fields['lname'].widget = forms.TextInput(
             attrs={'class': 'form-control', 'placeholder': 'Last name'})
         self.fields['passwrd'].widget = forms.PasswordInput(
-            attrs={'class': 'form-control', 'placeholder': 'Password'})
+            attrs={'class': 'form-control', 'id': 'password', 'onkeyup': 'check()', 'placeholder': 'Password', 'minlength': 6, 'maxlength': 14})

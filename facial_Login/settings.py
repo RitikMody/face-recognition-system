@@ -9,8 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
-from django.contrib.messages import constants as messages
+from django.contrib.messages import constants as message_constants
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -138,3 +137,9 @@ EMAIL_HOST_USER = 'miptesting12@gmail.com'  # Enter your email here
 EMAIL_HOST_PASSWORD = 'mip12345'  # Enter Password
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+MESSAGE_TAGS = {message_constants.DEBUG: 'debug',
+                message_constants.INFO: 'info',
+                message_constants.SUCCESS: 'success',
+                message_constants.WARNING: 'warning',
+                message_constants.ERROR: 'danger', }

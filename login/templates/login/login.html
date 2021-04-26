@@ -17,7 +17,7 @@
 <body id="body">
     {% if messages %}
     {% for message in messages %}
-    <div class="alert alert-info alert-dismissible">
+    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} alert-dismissible" role="alert">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
         <p align="center">{{message}}</p>
     </div>
@@ -51,7 +51,8 @@
                     <!-- <img src="../../../captured_images/img2.jpg"  alt="not found" > -->
                     <form class="form1" method="POST">
                         {% csrf_token %}
-                        <button type="submit" id="button" class="button2" name="facelogin" onclick="document.getElementById('video_feed').setAttribute('display', null)">
+                        <button type="submit" id="button" class="button2" name="facelogin"
+                            onclick="document.getElementById('video_feed').setAttribute('display', null)">
                             Face Login
                         </button>
                     </form>
@@ -60,4 +61,5 @@
         </div>
     </div>
 </body>
+
 </html>
