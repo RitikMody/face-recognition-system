@@ -185,6 +185,7 @@ def home(request):
         print(request.session['email'])
         email = request.session['email']
         staff_obj = Staff.objects.get(email=email)
+        name = staff_obj.fname + " " + staff_obj.lname
         pass_obj = Password.objects.all()
         pass_obj = pass_obj.filter(user=staff_obj)
         if 'form_submit' in request.POST:
@@ -203,7 +204,7 @@ def home(request):
             obj.app_name = app_name
             obj.app_password = password
             obj.save()
-            return render(request, 'login/homepage.html', {'obj': pass_obj, 'tab': 1})
+            return render(request, 'login/homepage.html', {'obj': pass_obj, 'tab': 1, 'name': name})
 
         if 'update' in request.POST:
             userid = request.POST.get('userid')
@@ -219,7 +220,7 @@ def home(request):
                     obj.app_email = app_email
                     obj.app_password = app_pass
                     obj.save()
-                    return render(request, 'login/homepage.html',  {'obj': pass_obj, 'tab': 1})
+                    return render(request, 'login/homepage.html',  {'obj': pass_obj, 'tab': 1, 'name': name})
 
             except:
                 pass
@@ -231,7 +232,7 @@ def home(request):
                 obj = pass_obj.get(id=userid)
                 if obj:
                     obj.delete()
-                    return render(request, 'login/homepage.html',  {'obj': pass_obj, 'tab': 1})
+                    return render(request, 'login/homepage.html',  {'obj': pass_obj, 'tab': 1, 'name': name})
             except:
                 pass
 
@@ -254,7 +255,7 @@ def home(request):
                         mail_subject, message, to=[to_email]
                     )
                     email.send()
-                    return render(request, 'login/homepage.html',  {'obj': pass_obj, 'tab': 1})
+                    return render(request, 'login/homepage.html',  {'obj': pass_obj, 'tab': 1, 'name': name})
             except:
                 pass
 
@@ -267,7 +268,7 @@ def home(request):
                     return redirect('login')
                 except:
                     return HttpResponse("logout failed")
-        return render(request, 'login/homepage.html',  {'obj': pass_obj})
+        return render(request, 'login/homepage.html',  {'obj': pass_obj, 'name': name})
 
     except:
         return redirect('login')

@@ -19,6 +19,7 @@
 
     <link rel="stylesheet" href="{% static 'login/assets/css/templatemo-softy-pinko.css' %}">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script>
     
     function update(id,app_name,email){
@@ -80,7 +81,8 @@
                             <img src="assets/images/logo.png" alt="Softy Pinko" />
                         </a> -->
                         <a href="#welcome" class="logo" style="color: black;">
-                            Password Manager
+                            Password Manager<br>
+                            <!-- <i class="fa fa-user"></i>{{ name }} -->
                         </a>
                         <!-- ***** Logo End ***** -->
                         <!-- ***** Menu Start ***** -->
@@ -90,6 +92,7 @@
                             <li><a href="#add">Add</a></li>
                             <li><a href="#view">View Passwords</a></li>
                             <li><a role="button" onclick="return logout('{{ request.session.email }}')" data-toggle="modal" data-target="#Modal2" style="text-decoration:none;" >Logout</a></li>
+                            <li><a href="#welcome" ><i class="fa fa-user"></i>{{ name }}</a></li>
                         </ul>
                         <a class='menu-trigger'>
                             <span>Menu</span>

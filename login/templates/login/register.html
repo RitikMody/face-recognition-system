@@ -14,28 +14,69 @@
 </head>
 <script>
     var check = function () {
+        const button = document.getElementById('submit')
+        if (document.getElementById('password').value != "" && document.getElementById('password2').value != ""){
         if (document.getElementById('password').value ==
             document.getElementById('password2').value) {
             document.getElementById('alertPassword').style.color = '#8CC63E';
             document.getElementById('alertPassword').innerHTML = '<span>Passwords Match !</span>';
+            button.disabled = false;
+
         } else {
             document.getElementById('alertPassword').style.color = '#EE2B39';
             document.getElementById('alertPassword').innerHTML = '<span>Passwords do not match</span>';
+            button.disabled = true;
         }
     }
+}
+    {% if messages %}
+    $(document).ready(function(){
+        $('#Modal1').modal({show:true});
+    });
+    {% endif %}
+
 </script>
 
 <body id="body">
 
-    {% if messages %}
+    <!-- {% if messages %}
     {% for message in messages %}
     <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} alert-dismissible" role="alert">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
         <p align="center">{{message}}</p>
     </div>
     {% endfor %}
+    {% endif %} -->
+    {% if messages %}
+    {% for message in messages %}
+    <div class="modal fade" id="Modal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel" style="margin-left: 45%;">Message</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left: 0;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+    
+                <p style="text-align: center;">{{message}}</p>
+                <div class="modal-body">
+                    <form class="form-horizontal" method="POST" name="myform">
+                        {% csrf_token %}
+                       
+    
+                <div class="row pt-3">
+                    <div class="col-md-2 offset-md-4 col-3 offset-2" style="margin-left: 45%;">
+                  <button type="button" class="btn btn-danger" data-dismiss="modal" algin='center'>OKAY</button>
+                </div>
+              </div>
+              </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
     {% endif %}
-
     <div class="main">
         <p class="sign" align="center">Register</p>
         <form class="form1" method="POST" enctype="multipart/form-data">
@@ -100,7 +141,7 @@
             </div>
 
 
-            <button type="submit" name="submit" class="submit" align="center">Register</button>
+            <button type="submit" name="submit" class="submit" id="submit" align="center">Register</button>
             <p class="forgot" align="center">Already Have an account? <a href="{% url 'login' %}" id="link">Login</p>
 
 
