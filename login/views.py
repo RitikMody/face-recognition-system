@@ -144,18 +144,13 @@ def login(request):
             return render(request, 'login/login.html')
     if 'facelogin' in request.POST:
         x = pre_process('captured_images/img2.jpg')
-        y = 'media/images'
+        y = 'media/'
+        email =  request.POST.get('facelogin_email')
         scores = {}
-        for image in os.listdir(y):
-            obj = Staff.objects.get(img='images/' + image)
-            score = 0
-            score = model.predict([x, pre_process(y + '/' + image)])
-            # print(obj.email+"="+score)
-            if score > 0.5:
-                scores[obj.email] = score
-        if len(scores) > 0:
-            print(len(scores))
-            email = max(scores, key=scores.get)
+        obj = Staff.objects.get(email=email)
+        score = model.predict([x, pre_process(y + '/' + str(obj.img))])
+        print(score)
+        if score > 0.5:
             try:
                 obj = Staff.objects.get(email=email)
                 print(obj)
@@ -173,7 +168,34 @@ def login(request):
             messages.error(
                 request, 'Unable to recognise the face.')
             return redirect('login')
-            # return render(request, 'login/login.html', {'set_value': 0})
+
+        #     obj = Staff.objects.get(img='images/' + image)
+        #     score = 0
+        #     score = model.predict([x, pre_process(y + '/' + image)])
+        #     if score > 0.5:
+        #         scores[obj.email] = score
+        # print(scores)
+        # if len(scores) > 0:
+        #     print(len(scores))
+        #     email = max(scores, key=scores.get)
+        #     try:
+        #         obj = Staff.objects.get(email=email)
+        #         print(obj)
+        #         if obj:
+        #             if obj.is_email_active:
+        #                 request.session['email'] = email
+        #                 return redirect('home')
+        #             else:
+        #                 messages.error(
+        #                     request, f'Please verify your email account first.')
+        #                 return redirect('login')
+        #     except:
+        #         pass
+        # else:
+        #     messages.error(
+        #         request, 'Unable to recognise the face.')
+        #     return redirect('login')
+        #     # return render(request, 'login/login.html', {'set_value': 0})
 
         return render(request, 'login/login.html', {'set_value': 1})
 
