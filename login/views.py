@@ -23,7 +23,9 @@ from keras.models import load_model
 import tensorflow as tf
 from deepface import DeepFace
 # net = DeepFace.OpenFace.loadModel()
+from Crypto.Random import get_random_bytes
 import os
+from Crypto.Cipher import AES
 import cv2
 from django.conf import settings
 classifier = cv2.CascadeClassifier(os.path.join(
@@ -150,7 +152,7 @@ def login(request):
         obj = Staff.objects.get(email=email)
         score = model.predict([x, pre_process(y + '/' + str(obj.img))])
         print(score)
-        if score > 0.5:
+        if score > 0.64:
             try:
                 obj = Staff.objects.get(email=email)
                 print(obj)
@@ -201,6 +203,18 @@ def login(request):
 
     return render(request, 'login/login.html')
 
+def encrypt_pass(email,pwd):
+    key = get_random_bytes(16)
+    file_out = open( str(email) + ".b", "wb")
+    file_out.write(key)
+    print("Generated key bytes:",key)
+    cipher_aes = AES.new(key, AES.MODE_EAX)
+    print("AES Generated")
+    ciphertext, tag = cipher_aes.encrypt_and_digest(pwd.encode('utf-8'))
+    passwd = cipher_aes.nonce + tag + ciphertext
+    print(len(cipher_aes.nonce), len(tag), len(ciphertext))
+    print(len(passwd))
+    return passwd
 
 def home(request):
     try:
@@ -216,6 +230,8 @@ def home(request):
             app_name = request.POST.get('name')
             app_email = request.POST.get('email')
             password = request.POST.get('password')
+            print("Encrypting")
+            password = encrypt_pass(email, password)
             print(email)
             print(app_name)
             print(app_email)
@@ -234,6 +250,7 @@ def home(request):
             app_name = request.POST.get('appname_update')
             app_email = request.POST.get('email_update')
             app_pass = request.POST.get('password')
+            app_pass = encrypt_pass(email, app_pass)
             try:
                 obj = pass_obj.get(id=userid)
                 print(obj)
@@ -261,25 +278,31 @@ def home(request):
         if 'view' in request.POST:
             userid = request.POST.get('user_id_view')
             print(userid)
-            try:
-                obj = pass_obj.get(id=userid)
-                if obj:
-                    print(obj.app_password)
-                    email = request.session['email']
-                    mail_subject = 'Your account password.'
-                    current_site = get_current_site(request)
-                    message = "Your password for " + obj.app_name + " with username/email: " + \
-                        obj.app_email + " is " + obj.app_password + "!!"
-                    print(messages)
-                    to_email = email
-                    print(to_email)
-                    email = EmailMessage(
-                        mail_subject, message, to=[to_email]
-                    )
-                    email.send()
-                    return render(request, 'login/homepage.html',  {'obj': pass_obj, 'tab': 1, 'name': name})
-            except:
-                pass
+            obj = pass_obj.get(id=userid)
+            if obj:
+                print(obj.app_password)
+                email = request.session['email']
+                password = obj.app_password
+                file_out = open( str(email) + ".b", "rb")
+                key = file_out.read()
+                print("key",key)
+                print("password", len(password[:16]), "_______________", len(password[16:32]), "______________", len(password[32:]))
+                cipher_aes = AES.new(key, AES.MODE_EAX, password[:16])
+                data = cipher_aes.decrypt_and_verify(password[32:], password[16:32])
+                password = data.decode('utf-8')
+                mail_subject = 'Your account password.'
+                current_site = get_current_site(request)
+                message = "Your password for " + obj.app_name + " with username/email: " + \
+                    obj.app_email + " is " + password
+                print(messages)
+                to_email = email
+                print(to_email)
+                email = EmailMessage(
+                    mail_subject, message, to=[to_email]
+                )
+                email.send()
+                return render(request, 'login/homepage.html',  {'obj': pass_obj, 'tab': 1, 'name': name})
+            
 
         if 'signout' in request.POST:
             email = request.POST.get('user_session')
@@ -291,10 +314,8 @@ def home(request):
                 except:
                     return HttpResponse("logout failed")
         return render(request, 'login/homepage.html',  {'obj': pass_obj, 'name': name})
-
     except:
         return redirect('login')
-
 
 def gen(camera):
     try:
