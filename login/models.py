@@ -1,5 +1,5 @@
 from django.db import models
-
+from django import forms
 # Create your models here.
 
 
@@ -7,7 +7,7 @@ class Staff(models.Model):
     email = models.CharField(max_length=100)
     fname = models.CharField(max_length=100)
     lname = models.CharField(max_length=100)
-    passwrd = models.CharField(max_length=100)
+    passwrd = models.CharField(max_length=5000)
     img = models.ImageField(upload_to='images/')
     is_email_active = models.BooleanField(default=False)
 

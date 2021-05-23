@@ -28,6 +28,9 @@ import os
 from Crypto.Cipher import AES
 import cv2
 from django.conf import settings
+from django.contrib.auth.hashers import check_password, make_password
+
+
 classifier = cv2.CascadeClassifier(os.path.join(
     settings.BASE_DIR, 'haarcascade_frontalface_default.xml'))
 
@@ -54,7 +57,11 @@ def register(request):
                     messages.error(
                         request, f'This email is already registered.')
             except:
+                password = form.cleaned_data['passwrd']
+                hashed = make_password(password)
                 obj = form.save()
+                obj.passwrd = hashed
+                obj.save()
                 print(obj.img)
                 frame = cv2.imread("media/"+str(obj.img))
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -127,7 +134,7 @@ def login(request):
             print(obj)
             if obj:
                 if obj.is_email_active:
-                    if obj.passwrd == password:
+                    if check_password(password, obj.passwrd):
                         print("matched")
                         request.session['email'] = email
                         print(request.session['email'])
@@ -147,28 +154,37 @@ def login(request):
     if 'facelogin' in request.POST:
         x = pre_process('captured_images/img2.jpg')
         y = 'media/'
-        email =  request.POST.get('facelogin_email')
+        email = request.POST.get('facelogin_email')
         scores = {}
-        obj = Staff.objects.get(email=email)
-        score = model.predict([x, pre_process(y + '/' + str(obj.img))])
-        print(score)
-        if score > 0.64:
-            try:
-                obj = Staff.objects.get(email=email)
-                print(obj)
-                if obj:
-                    if obj.is_email_active:
-                        request.session['email'] = email
-                        return redirect('home')
-                    else:
-                        messages.error(
-                            request, f'Please verify your email account first.')
-                        return redirect('login')
-            except:
-                pass
-        else:
+        try:
+            obj = Staff.objects.get(email=email)
+            if obj:
+                score = model.predict([x, pre_process(y + '/' + str(obj.img))])
+                print(score)
+                if score > 0.75:
+                    try:
+                        obj = Staff.objects.get(email=email)
+                        print(obj)
+                        if obj:
+                            if obj.is_email_active:
+                                request.session['email'] = email
+                                return redirect('home')
+                            else:
+                                messages.error(
+                                    request, f'Please verify your email account first.')
+                                return redirect('login')
+                    except:
+                        pass
+                else:
+                    messages.error(
+                        request, 'Unable to recognise the face.')
+                    return redirect('login')
+            else:
+                messages.error(
+                    request, f'No such email exist.Please register first')
+        except:
             messages.error(
-                request, 'Unable to recognise the face.')
+                request, f'No such email exist.Please register first')
             return redirect('login')
 
         #     obj = Staff.objects.get(img='images/' + image)
@@ -203,11 +219,12 @@ def login(request):
 
     return render(request, 'login/login.html')
 
-def encrypt_pass(email,pwd):
+
+def encrypt_pass(email, pwd):
     key = get_random_bytes(16)
-    file_out = open( str(email) + ".b", "wb")
+    file_out = open(str(email) + ".b", "wb")
     file_out.write(key)
-    print("Generated key bytes:",key)
+    print("Generated key bytes:", key)
     cipher_aes = AES.new(key, AES.MODE_EAX)
     print("AES Generated")
     ciphertext, tag = cipher_aes.encrypt_and_digest(pwd.encode('utf-8'))
@@ -215,6 +232,7 @@ def encrypt_pass(email,pwd):
     print(len(cipher_aes.nonce), len(tag), len(ciphertext))
     print(len(passwd))
     return passwd
+
 
 def home(request):
     try:
@@ -283,12 +301,14 @@ def home(request):
                 print(obj.app_password)
                 email = request.session['email']
                 password = obj.app_password
-                file_out = open( str(email) + ".b", "rb")
+                file_out = open(str(email) + ".b", "rb")
                 key = file_out.read()
-                print("key",key)
-                print("password", len(password[:16]), "_______________", len(password[16:32]), "______________", len(password[32:]))
+                print("key", key)
+                print("password", len(password[:16]), "_______________", len(
+                    password[16:32]), "______________", len(password[32:]))
                 cipher_aes = AES.new(key, AES.MODE_EAX, password[:16])
-                data = cipher_aes.decrypt_and_verify(password[32:], password[16:32])
+                data = cipher_aes.decrypt_and_verify(
+                    password[32:], password[16:32])
                 password = data.decode('utf-8')
                 mail_subject = 'Your account password.'
                 current_site = get_current_site(request)
@@ -302,7 +322,6 @@ def home(request):
                 )
                 email.send()
                 return render(request, 'login/homepage.html',  {'obj': pass_obj, 'tab': 1, 'name': name})
-            
 
         if 'signout' in request.POST:
             email = request.POST.get('user_session')
@@ -316,6 +335,7 @@ def home(request):
         return render(request, 'login/homepage.html',  {'obj': pass_obj, 'name': name})
     except:
         return redirect('login')
+
 
 def gen(camera):
     try:
