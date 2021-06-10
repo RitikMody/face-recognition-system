@@ -1,5 +1,7 @@
 # Face Recognition System
 
+![Model Architecture](readme/Capture1.PNG)
+
 ## Password Manager Website
 
 - User can register with an email address and password.
@@ -28,6 +30,7 @@ It consists of :
 
 ## Siamese Network
 
+![Architecture](readme/Capture.PNG)
 
 ### Model:
 - Input: 2 images of size (96,96,3)
