@@ -1,3 +1,4 @@
+import os
 """
 Django settings for facial_Login project.
 
@@ -134,7 +135,7 @@ MEDIA_URL = '/media/'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'miptesting12@gmail.com'  # Enter your email here
-EMAIL_HOST_PASSWORD = 'mip12345'  # Enter Password
+EMAIL_HOST_PASSWORD = os.getenv('PASSWORD')  # Enter Password
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
